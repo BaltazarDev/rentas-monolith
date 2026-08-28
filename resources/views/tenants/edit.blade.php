@@ -1,0 +1,94 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="max-w-xl mx-auto space-y-8 animate-fade-in">
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+        <a href="{{ route('tenants.index') }}" class="p-2 text-slate-400 hover:text-slate-650 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        </a>
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">Editar Inquilino</h1>
+            <p class="text-sm text-slate-555 dark:text-slate-400 mt-1">Actualiza los datos de "{{ $tenant->full_name }}".</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form action="{{ route('tenants.update', $tenant) }}" method="POST" class="space-y-6">
+        @csrf
+        @method('PUT')
+
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 space-y-5">
+            <!-- Full Name -->
+            <div>
+                <label for="full_name" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Nombre Completo</label>
+                <input type="text" name="full_name" id="full_name" required value="{{ old('full_name', $tenant->full_name) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                @error('full_name') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label for="phone" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label>
+                <input type="tel" name="phone" id="phone" value="{{ old('phone', $tenant->phone) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                @error('phone') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Correo Electrónico</label>
+                <input type="email" name="email" id="email" value="{{ old('email', $tenant->email) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                @error('email') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Unit assignment -->
+            <div>
+                <label for="unit_id" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Departamento / Local</label>
+                <select name="unit_id" id="unit_id" required class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-805 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @foreach($units as $u)
+                        <option value="{{ $u->id }}" {{ old('unit_id', $tenant->unit_id) == $u->id ? 'selected' : '' }}>
+                            {{ $u->name }} ({{ $u->house->name ?? 'Casa' }}) - ${{ number_format($u->base_rent_cost) }}/mes
+                        </option>
+                    @endforeach
+                </select>
+                @error('unit_id') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Payment Due Day -->
+            <div>
+                <label for="payment_due_day" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Día de Pago Vencimiento (1 - 28)</label>
+                <input type="number" name="payment_due_day" id="payment_due_day" min="1" max="28" required value="{{ old('payment_due_day', $tenant->payment_due_day) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                @error('payment_due_day') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Contract Start Date -->
+            <div>
+                <label for="start_date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Fecha de Inicio del Contrato</label>
+                <input type="date" name="start_date" id="start_date" required value="{{ old('start_date', $tenant->start_date) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                @error('start_date') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Contract End Date -->
+            <div>
+                <label for="end_date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Fecha de Fin (Opcional)</label>
+                <input type="date" name="end_date" id="end_date" value="{{ old('end_date', $tenant->end_date) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                @error('end_date') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Is Active Status -->
+            <div>
+                <label for="is_active" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Estado del Contrato</label>
+                <select name="is_active" id="is_active" required class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-850 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    <option value="1" {{ old('is_active', $tenant->is_active) == 1 ? 'selected' : '' }}>Activo (Ocupa la unidad)</option>
+                    <option value="0" {{ old('is_active', $tenant->is_active) == 0 ? 'selected' : '' }}>Inactivo (Contrato finalizado / desocupado)</option>
+                </select>
+                @error('is_active') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full py-3.5 px-4 rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] font-semibold text-sm shadow-md transition-all">
+            Actualizar Inquilino
+        </button>
+    </form>
+</div>
+@endsection
