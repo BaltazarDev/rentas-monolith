@@ -15,6 +15,14 @@
         </a>
     </div>
 
+    <!-- Search Bar -->
+    <div class="relative max-w-md">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        </span>
+        <input type="text" id="tenant-search" placeholder="Buscar inquilino por nombre, contacto o propiedad..." class="w-full rounded-2xl border border-slate-205 dark:border-slate-700 pl-11 pr-4 py-3 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm focus:outline-none transition">
+    </div>
+
     <!-- Tenants List -->
     <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
@@ -37,14 +45,17 @@
                                         {{ substr($tenant->full_name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <span class="text-sm font-bold block">{{ $tenant->full_name }}</span>
+                                        <a href="{{ route('tenants.show', $tenant->id) }}" class="text-sm font-bold block text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition">{{ $tenant->full_name }}</a>
                                         <span class="text-[10px] text-slate-400 dark:text-slate-550 font-medium">Contrato desde: {{ \Carbon\Carbon::parse($tenant->start_date)->format('d/m/Y') }}</span>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 space-y-1">
+                             <td class="px-6 py-4 space-y-1">
                                 @if($tenant->phone)
-                                    <a href="tel:{{ $tenant->phone }}" class="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 block">📞 {{ $tenant->phone }}</a>
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="tel:{{ $tenant->phone }}" class="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600">📞 {{ $tenant->phone }}</a>
+                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $tenant->phone) }}" target="_blank" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline" title="WhatsApp">💬</a>
+                                    </div>
                                 @endif
                                 @if($tenant->email)
                                     <a href="mailto:{{ $tenant->email }}" class="text-xs text-slate-550 dark:text-slate-400 hover:text-indigo-600 block">✉️ {{ $tenant->email }}</a>
@@ -65,9 +76,18 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('tenants.edit', $tenant->id) }}" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
-                                    Editar
-                                </a>
+                                <div class="flex items-center justify-end gap-3">
+                                    <a href="{{ route('tenants.edit', $tenant->id) }}" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                        Editar
+                                    </a>
+                                    <form action="{{ route('tenants.destroy', $tenant->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este inquilino? Se liberará la unidad asignada.')" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs font-bold text-rose-600 hover:underline bg-transparent border-0 p-0 cursor-pointer">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -82,4 +102,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('tenant-search');
+        const rows = document.querySelectorAll('tbody tr');
+
+        searchInput.addEventListener('input', function (e) {
+            const query = e.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                // Skip empty row if exists
+                if (row.cells.length === 1 && row.cells[0].colSpan === 5) return;
+                
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 @endsection

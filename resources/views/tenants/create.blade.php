@@ -27,8 +27,8 @@
 
             <!-- Phone -->
             <div>
-                <label for="phone" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label>
-                <input type="tel" name="phone" id="phone" placeholder="Número telefónico" value="{{ old('phone') }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                <label for="phone" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Número Celular</label>
+                <input type="tel" name="phone" id="phone" placeholder="Ej: 5512345678" value="{{ old('phone') }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
                 @error('phone') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
 

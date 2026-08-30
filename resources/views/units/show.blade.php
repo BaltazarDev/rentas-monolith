@@ -50,10 +50,15 @@
                 
                 @if($unit->tenant->phone)
                     <div>
-                        <span class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Teléfono</span>
-                        <a href="tel:{{ $unit->tenant->phone }}" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
-                            📞 {{ $unit->tenant->phone }}
-                        </a>
+                        <span class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Número Celular</span>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <a href="tel:{{ $unit->tenant->phone }}" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                                📞 {{ $unit->tenant->phone }}
+                            </a>
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $unit->tenant->phone) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950/40 transition" title="Enviar WhatsApp">
+                                💬 WhatsApp
+                            </a>
+                        </div>
                     </div>
                 @endif
 

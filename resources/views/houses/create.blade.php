@@ -14,7 +14,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('houses.store') }}" method="POST" class="space-y-6">
+    <form action="{{ route('houses.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <!-- Card: Details -->
@@ -40,13 +40,21 @@
                 </div>
 
                 <div>
-                    <label for="photo_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">URL de Foto (Opcional)</label>
-                    <input type="url" name="photo_url" id="photo_url" placeholder="https://ejemplo.com/foto.jpg" value="{{ old('photo_url') }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    <label for="photo" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Foto de la Vivienda (Archivo)</label>
+                    <input type="file" name="photo" id="photo" accept="image/*" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @error('photo') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label for="map_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">URL de Mapa Embed (Opcional)</label>
-                    <input type="url" name="map_url" id="map_url" placeholder="https://www.google.com/maps/embed?pb=..." value="{{ old('map_url') }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    <label for="map_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Enlace Externo de Google Maps (Opcional)</label>
+                    <input type="url" name="map_url" id="map_url" placeholder="https://maps.app.goo.gl/..." value="{{ old('map_url') }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @error('map_url') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label for="embed_map_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">URL de Mapa Embebido (Opcional)</label>
+                    <input type="url" name="embed_map_url" id="embed_map_url" placeholder="https://www.google.com/maps/embed?pb=..." value="{{ old('embed_map_url') }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @error('embed_map_url') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
             </div>
         </div>
@@ -102,16 +110,17 @@
         let rowIndex = 1;
 
         addBtn.addEventListener('click', function () {
+            const nextNum = container.querySelectorAll('.unit-row').length + 1;
             const row = document.createElement('div');
             row.className = 'unit-row p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-end relative';
             row.innerHTML = `
                 <div class="flex-1 w-full">
                     <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Nombre de Unidad</label>
-                    <input type="text" name="units[\${rowIndex}][name]" required value="Depto \${rowIndex + 1}" placeholder="Ej: Depto 101, Local A" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white dark:bg-slate-700 text-slate-805 dark:text-slate-100 text-sm">
+                    <input type="text" name="units[${rowIndex}][name]" required value="Depto ${nextNum}" placeholder="Ej: Depto 101, Local A" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white dark:bg-slate-700 text-slate-805 dark:text-slate-100 text-sm">
                 </div>
                 <div class="w-full md:w-44">
                     <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tipo</label>
-                    <select name="units[\${rowIndex}][type]" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white dark:bg-slate-700 text-slate-805 dark:text-slate-100 text-sm">
+                    <select name="units[${rowIndex}][type]" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white dark:bg-slate-700 text-slate-805 dark:text-slate-100 text-sm">
                         <option value="apartment">Departamento</option>
                         <option value="commercial">Local Comercial</option>
                         <option value="house">Casa Independiente</option>
@@ -119,7 +128,7 @@
                 </div>
                 <div class="w-full md:w-44">
                     <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Renta Base ($ MXN)</label>
-                    <input type="number" name="units[\${rowIndex}][base_rent_cost]" required value="4000" placeholder="4000" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white dark:bg-slate-700 text-slate-805 dark:text-slate-100 text-sm">
+                    <input type="number" name="units[${rowIndex}][base_rent_cost]" required value="4000" placeholder="4000" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white dark:bg-slate-700 text-slate-805 dark:text-slate-100 text-sm">
                 </div>
                 <div class="w-10 flex items-center justify-center">
                     <button type="button" class="remove-row-btn p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl transition focus:outline-none">

@@ -16,10 +16,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@rentas.com'],
+            ['email' => 'sistemascreativos@hotmail.com'],
             [
                 'name' => 'Administrador',
-                'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
+                'password' => \Illuminate\Support\Facades\Hash::make('Gundam84'),
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'bgdevsoft@gmail.com'],
+            [
+                'name' => 'Administrador 2',
+                'password' => \Illuminate\Support\Facades\Hash::make('#Rentas2531&'),
             ]
         );
     }

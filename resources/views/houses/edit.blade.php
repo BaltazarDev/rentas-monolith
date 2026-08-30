@@ -14,7 +14,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('houses.update', $house) }}" method="POST" class="space-y-6">
+    <form action="{{ route('houses.update', $house) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -41,13 +41,21 @@
                 </div>
 
                 <div>
-                    <label for="photo_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">URL de Foto (Opcional)</label>
-                    <input type="url" name="photo_url" id="photo_url" placeholder="https://ejemplo.com/foto.jpg" value="{{ old('photo_url', $house->photo_url) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    <label for="photo" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Foto de la Vivienda (Subir nueva)</label>
+                    <input type="file" name="photo" id="photo" accept="image/*" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @error('photo') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label for="map_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">URL de Mapa Embed (Opcional)</label>
-                    <input type="url" name="map_url" id="map_url" placeholder="https://www.google.com/maps/embed?pb=..." value="{{ old('map_url', $house->map_url) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    <label for="map_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Enlace Externo de Google Maps (Opcional)</label>
+                    <input type="url" name="map_url" id="map_url" placeholder="https://maps.app.goo.gl/..." value="{{ old('map_url', $house->map_url) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @error('map_url') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label for="embed_map_url" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">URL de Mapa Embebido (Opcional)</label>
+                    <input type="url" name="embed_map_url" id="embed_map_url" placeholder="https://www.google.com/maps/embed?pb=..." value="{{ old('embed_map_url', $house->embed_map_url) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                    @error('embed_map_url') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
             </div>
         </div>

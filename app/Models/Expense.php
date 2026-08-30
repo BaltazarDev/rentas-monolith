@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
-    protected $fillable = ['house_id', 'unit_id', 'type', 'amount', 'expense_date', 'paid_by_owner', 'notes'];
+    protected $fillable = ['house_id', 'unit_id', 'type', 'amount', 'expense_date', 'paid_by_owner', 'notes', 'receipt_url'];
 
     public function house()
     {

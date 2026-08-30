@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class House extends Model
 {
-    protected $fillable = ['name', 'address', 'map_url', 'photo_url', 'description'];
+    protected $fillable = ['name', 'address', 'map_url', 'embed_map_url', 'photo_url', 'description'];
 
     public function units()
     {

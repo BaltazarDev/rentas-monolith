@@ -30,15 +30,20 @@ class HouseController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'required|string',
             'description' => 'nullable|string',
-            'photo_url' => 'nullable|url',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'map_url' => 'nullable|url',
+            'embed_map_url' => 'nullable|url',
             'units' => 'nullable|array',
             'units.*.name' => 'required|string|max:255',
             'units.*.type' => 'required|string|in:apartment,commercial,house',
             'units.*.base_rent_cost' => 'required|numeric|min:0',
         ]);
 
-        $photoUrl = $request->input('photo_url') ?: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80';
+        $photoUrl = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80';
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('houses', 'public');
+            $photoUrl = '/storage/' . $path;
+        }
 
         $house = House::create([
             'name' => $request->name,
@@ -46,6 +51,7 @@ class HouseController extends Controller
             'description' => $request->description,
             'photo_url' => $photoUrl,
             'map_url' => $request->map_url,
+            'embed_map_url' => $request->embed_map_url,
         ]);
 
         if ($request->has('units') && is_array($request->units)) {
@@ -81,11 +87,16 @@ class HouseController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'required|string',
             'description' => 'nullable|string',
-            'photo_url' => 'nullable|url',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'map_url' => 'nullable|url',
+            'embed_map_url' => 'nullable|url',
         ]);
 
-        $photoUrl = $request->input('photo_url') ?: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80';
+        $photoUrl = $house->photo_url;
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('houses', 'public');
+            $photoUrl = '/storage/' . $path;
+        }
 
         $house->update([
             'name' => $request->name,
@@ -93,6 +104,7 @@ class HouseController extends Controller
             'description' => $request->description,
             'photo_url' => $photoUrl,
             'map_url' => $request->map_url,
+            'embed_map_url' => $request->embed_map_url,
         ]);
 
         return redirect()->route('houses.show', $house)->with('success', 'Propiedad actualizada con éxito.');

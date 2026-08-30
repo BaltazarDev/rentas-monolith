@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Unit;
 use App\Models\Tenant;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class TenantController extends Controller
@@ -103,5 +104,36 @@ class TenantController extends Controller
         }
 
         return redirect()->route('tenants.index')->with('success', 'Inquilino actualizado con éxito.');
+    }
+
+    public function show(Tenant $tenant)
+    {
+        $tenant->load('unit.house');
+
+        $payments = collect();
+        if ($tenant->unit_id) {
+            $payments = Payment::where('unit_id', $tenant->unit_id)
+                ->where('payment_date', '>=', $tenant->start_date)
+                ->when($tenant->end_date, function ($query) use ($tenant) {
+                    $query->where('payment_date', '<=', $tenant->end_date);
+                })
+                ->orderBy('payment_date', 'desc')
+                ->get();
+        }
+
+        return view('tenants.show', compact('tenant', 'payments'));
+    }
+
+    public function destroy(Tenant $tenant)
+    {
+        // Free the unit if tenant was active
+        if ($tenant->unit_id) {
+            Unit::where('id', $tenant->unit_id)->update(['status' => 'vacant']);
+        }
+
+        $tenant->update(['is_active' => false]);
+        $tenant->delete(); // Soft delete
+
+        return redirect()->route('tenants.index')->with('success', 'Inquilino eliminado con éxito.');
     }
 }
