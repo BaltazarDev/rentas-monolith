@@ -19,15 +19,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>{{ config('app.name', 'Control de Rentas') }}</title>
     
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#4f46e5">
+    <!-- PWA & Standalone Mode Meta Tags -->
+    <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Rentas">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Control de Rentas">
+    <meta name="application-name" content="Control de Rentas">
+    <meta name="msapplication-TileColor" content="#4f46e5">
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
     
-    <!-- Manifest -->
-    <link rel="manifest" href="/site.webmanifest">
+    <!-- PWA Manifest & Icons -->
+    <link rel="manifest" href="/site.webmanifest?v=2">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,9 +50,26 @@
     @livewireStyles
     
     <style>
+        :root {
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
+            --sal: env(safe-area-inset-left, 0px);
+            --sar: env(safe-area-inset-right, 0px);
+        }
         body {
             font-family: 'Outfit', sans-serif;
             -webkit-tap-highlight-color: transparent;
+        }
+        .safe-pb {
+            padding-bottom: calc(var(--sab) + 4.5rem);
+        }
+        .safe-bottom-nav {
+            padding-bottom: var(--sab);
+            height: calc(4rem + var(--sab));
+        }
+        .safe-header {
+            padding-top: var(--sat);
+            height: calc(4rem + var(--sat));
         }
     </style>
 </head>
@@ -94,6 +120,14 @@
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     Exportar Base de Datos
                 </a>
+
+                <!-- PWA Install Button (Desktop) -->
+                <button type="button" onclick="installPwa()" class="pwa-install-btn hidden w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 text-indigo-600 dark:text-indigo-400 bg-indigo-50/80 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 mt-2 border border-indigo-200/50 dark:border-indigo-800/50 shadow-sm text-left">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    <span>Instalar App</span>
+                </button>
             </nav>
             
             <!-- User Profile & Logout Section -->
@@ -131,9 +165,9 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col min-h-screen overflow-y-auto relative bg-slate-50 dark:bg-slate-900 pb-12">
+        <main class="flex-1 flex flex-col min-h-screen overflow-y-auto relative bg-slate-50 dark:bg-slate-900 safe-pb">
             <!-- Top Navbar (Mobile / Tablet Header) -->
-            <header class="flex md:hidden items-center justify-between h-16 bg-white dark:bg-slate-800 border-b border-slate-150 dark:border-slate-700 px-6 sticky top-0 z-30 shadow-sm">
+            <header class="flex md:hidden items-center justify-between safe-header bg-white dark:bg-slate-800 border-b border-slate-150 dark:border-slate-700 px-6 sticky top-0 z-30 shadow-sm">
                 <span class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-indigo-400 bg-clip-text text-transparent flex items-center gap-1.5">
                     <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -142,6 +176,13 @@
                 </span>
                 
                 <div class="flex items-center gap-1">
+                    <!-- PWA Install Button (Mobile Header) -->
+                    <button type="button" onclick="installPwa()" class="pwa-install-btn hidden p-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition" title="Instalar Aplicación">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </button>
+
                     <button onclick="toggleDarkMode()" class="p-2 text-slate-400 hover:text-indigo-650 dark:hover:text-amber-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition duration-150 focus:outline-none" title="Cambiar tema">
                         <svg class="w-5 h-5 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
@@ -204,7 +245,7 @@
     </div>
 
     <!-- Bottom Navigation Bar (Mobile / Tablet Only) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-800 border-t border-slate-150 dark:border-slate-700 flex items-center justify-around px-2 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 safe-bottom-nav bg-white dark:bg-slate-800 border-t border-slate-150 dark:border-slate-700 flex items-center justify-around px-2 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <a href="/dashboard" class="flex flex-col items-center gap-0.5 text-xs font-semibold px-4 py-2 transition {{ request()->is('dashboard') || request()->is('/') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" /></svg>
             Dashboard
@@ -221,23 +262,101 @@
         </a>
     </nav>
 
+    <!-- Modal informativo para iOS Safari -->
+    <div id="pwa-ios-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-150 dark:border-slate-700 text-center animate-fade-in">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Instalar en iPhone / iPad</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                Para usar la app sin la barra de navegación:
+            </p>
+            <div class="text-left bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-2xl text-xs space-y-2 text-slate-600 dark:text-slate-300 mb-5 border border-slate-150 dark:border-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">1</span>
+                    <span>Toca el botón <strong>Compartir</strong> <svg class="inline w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg> en Safari.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">2</span>
+                    <span>Selecciona <strong>"Agregar al inicio"</strong>.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">3</span>
+                    <span>Abre la app desde tu pantalla de inicio sin navegador.</span>
+                </div>
+            </div>
+            <button onclick="document.getElementById('pwa-ios-modal').classList.add('hidden')" class="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                Entendido
+            </button>
+        </div>
+    </div>
+
     <!-- Livewire Transaction Modal Component -->
     @livewire('transaction-modal')
 
     <!-- Livewire Scripts -->
     @livewireScripts
     
-    <!-- PWA Registration Service Worker -->
+    <!-- PWA Registration & Install Handler -->
     <script>
+        // Registrar Service Worker con forzado de actualización
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
-                    .catch(err => console.error('Error al registrar el Service Worker:', err));
+                navigator.serviceWorker.register('/sw.js?v=2')
+                    .then(reg => {
+                        console.log('PWA Service Worker registrado:', reg.scope);
+                        // Forzar comprobación de actualización de caché
+                        reg.update();
+                    })
+                    .catch(err => console.error('Error al registrar Service Worker:', err));
             });
         }
-    </script>
-    <script>
+
+        // Manejo de Instalación PWA (Modo Standalone / App)
+        let deferredPrompt = null;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+
+        // Mostrar botones de instalación por defecto si no estamos dentro de la app standalone
+        if (!isStandalone) {
+            document.querySelectorAll('.pwa-install-btn').forEach(el => el.classList.remove('hidden'));
+        }
+
+        // Capturar evento antes de instalación en Chrome / Edge
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!isStandalone) {
+                document.querySelectorAll('.pwa-install-btn').forEach(el => el.classList.remove('hidden'));
+            }
+        });
+
+        function installPwa() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó la instalación');
+                        document.querySelectorAll('.pwa-install-btn').forEach(el => el.classList.add('hidden'));
+                    }
+                    deferredPrompt = null;
+                });
+            } else if (isIos) {
+                document.getElementById('pwa-ios-modal').classList.remove('hidden');
+            } else {
+                // Si el navegador ya la tiene instalada o no ha disparado el prompt
+                alert('💡 Cómo instalar o abrir la app:\n\n1. En Google Chrome o Edge en tu PC: Busca el icono ⊕ o monitor a la derecha de la barra de direcciones (o menú ⋮ > "Instalar Control de Rentas").\n2. Si ya la instalaste anteriormente, búscala en tu menú de Inicio de Windows como "Control de Rentas".\n3. En teléfonos: Abre el menú ⋮ del navegador y selecciona "Instalar aplicación".');
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA instalada con éxito');
+            document.querySelectorAll('.pwa-install-btn').forEach(el => el.classList.add('hidden'));
+        });
+
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
             document.cookie = "theme=" + (isDark ? 'dark' : 'light') + "; path=/; max-age=31536000"; // 1 year
