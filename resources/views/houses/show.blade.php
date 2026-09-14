@@ -16,24 +16,85 @@
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
             </a>
             
-            <form action="{{ route('houses.destroy', $house) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta propiedad y todas sus unidades?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition" title="Eliminar Propiedad">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </button>
-            </form>
+            @if(Auth::check() && Auth::user()->isSuperAdmin())
+                @if($house->is_archived)
+                    <!-- Restaurar Propiedad -->
+                    <form action="{{ route('houses.unarchive', $house) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl transition" title="Restaurar / Activar Propiedad">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.033 8.033 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </form>
+                @else
+                    <!-- Archivar Propiedad -->
+                    <form action="{{ route('houses.archive', $house) }}" method="POST" onsubmit="return confirm('¿Deseas archivar la propiedad \'{{ $house->name }}\'?\n\nSe ocultará del catálogo activo pero CONSERVARÁ todo su historial: unidades, contratos, cobros y gastos.')">
+                        @csrf
+                        <button type="submit" class="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-xl transition" title="Archivar Propiedad (Conservar historial)">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                            </svg>
+                        </button>
+                    </form>
+                @endif
+
+                <!-- Eliminar Propiedad Definitivamente -->
+                <form action="{{ route('houses.destroy', $house) }}" method="POST" onsubmit="return confirm('ADVERTENCIA: ¿Estás seguro de eliminar definitivamente esta propiedad y todas sus unidades asociadas?\n\nEsta acción DESTRUIRÁ permanentemente unidades, contratos y pagos. Si deseas conservar los datos históricos, se recomienda ARCHIVAR.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition" title="Eliminar Propiedad Definitivamente (Super Admin)">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 
+    @if($house->is_archived)
+        <!-- Banner de Propiedad Archivada -->
+        <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="p-2.5 rounded-2xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 shrink-0">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                </span>
+                <div>
+                    <h4 class="text-sm font-bold text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                        Propiedad Archivada
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-100 font-extrabold uppercase">Historial Seguro</span>
+                    </h4>
+                    <p class="text-xs text-amber-800 dark:text-amber-300 mt-0.5">Esta propiedad está archivada y oculta de la vista activa. Sus contratos, unidades, cobros y gastos se mantienen 100% seguros y sin pérdida de datos.</p>
+                </div>
+            </div>
+            @if(Auth::check() && Auth::user()->isSuperAdmin())
+                <form action="{{ route('houses.unarchive', $house) }}" method="POST" class="shrink-0">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.033 8.033 0 01-15.357-2m15.357 2H15" /></svg>
+                        Restaurar / Activar
+                    </button>
+                </form>
+            @endif
+        </div>
+    @endif
+
     <!-- Big Image Header -->
-    <div class="h-64 rounded-3xl overflow-hidden relative shadow-sm border border-slate-100 dark:border-slate-700/50 bg-slate-100 dark:bg-slate-800">
-        <img 
-            src="{{ $house->photo_url ?: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80' }}" 
-            alt="{{ $house->name }}" 
-            class="w-full h-full object-cover"
-        >
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+    <div class="h-64 rounded-3xl overflow-hidden relative shadow-sm border border-slate-100 dark:border-slate-700/50 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+        @if($house->photo_url)
+            <img 
+                src="{{ $house->photo_url }}" 
+                alt="{{ $house->name }}" 
+                class="w-full h-full object-cover"
+                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+            >
+        @endif
+        <div class="{{ $house->photo_url ? 'hidden ' : '' }}w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-200 via-slate-250 to-slate-300 dark:from-slate-750 dark:via-slate-800 dark:to-slate-850 text-slate-500 dark:text-slate-400">
+            <svg class="w-16 h-16 mb-2 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-xs font-bold tracking-wider uppercase opacity-75">Sin fotografía</span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent pointer-events-none"></div>
         <div class="absolute bottom-6 left-6 right-6 text-white space-y-1">
             <h1 class="text-2xl font-extrabold">{{ $house->name }}</h1>
             <p class="text-sm opacity-90 flex items-center gap-1.5">
@@ -65,32 +126,48 @@
         <div id="tab-units-content" class="tab-content p-6 space-y-6">
             <div class="space-y-4">
                 @forelse($house->units as $unit)
-                    <a href="{{ route('units.show', $unit) }}" class="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100/70 dark:bg-slate-900/30 dark:hover:bg-slate-700/30 rounded-2xl transition duration-150 border border-slate-100 dark:border-slate-800/80">
-                        <div class="flex items-center gap-4">
-                            <!-- Avatar icon -->
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm {{ $unit->status === 'occupied' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-450' : 'bg-slate-200/50 text-slate-500 dark:bg-slate-850 dark:text-slate-400' }}">
-                                @if($unit->type === 'commercial')
-                                    🏪
-                                @else
-                                    🚪
-                                @endif
-                            </div>
-                            
-                            <div>
-                                <h4 class="text-sm font-bold text-slate-850 dark:text-slate-200">{{ $unit->name }}</h4>
-                                <p class="text-xs text-slate-450 dark:text-slate-500 font-medium mt-0.5">
-                                    Renta: ${{ number_format($unit->base_rent_cost, 2) }}
-                                    @if($unit->status === 'occupied' && $unit->tenant)
-                                        • Inquilino: {{ $unit->tenant->full_name }}
+                    <div class="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100/70 dark:bg-slate-900/30 dark:hover:bg-slate-700/30 rounded-2xl transition duration-150 border border-slate-100 dark:border-slate-800/80">
+                        <a href="{{ route('units.show', $unit) }}" class="flex-1 flex items-center justify-between mr-3 min-w-0">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <!-- Avatar icon -->
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm shrink-0 {{ $unit->status === 'occupied' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-450' : 'bg-slate-200/50 text-slate-500 dark:bg-slate-850 dark:text-slate-400' }}">
+                                    @if($unit->type === 'commercial')
+                                        🏪
+                                    @else
+                                        🚪
                                     @endif
-                                </p>
+                                </div>
+                                
+                                <div class="truncate">
+                                    <h4 class="text-sm font-bold text-slate-850 dark:text-slate-200 truncate">{{ $unit->name }}</h4>
+                                    <p class="text-xs text-slate-450 dark:text-slate-500 font-medium mt-0.5 truncate">
+                                        Renta: ${{ number_format($unit->base_rent_cost, 2) }}
+                                        @if($unit->status === 'occupied' && $unit->tenant)
+                                            • Inquilino: {{ $unit->tenant->full_name }}
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full {{ $unit->status === 'occupied' ? 'text-emerald-600 bg-emerald-50 dark:text-emerald-450 dark:bg-emerald-950/20' : 'text-slate-500 bg-slate-100 dark:text-slate-400 dark:bg-slate-750' }}">
-                            {{ $unit->status === 'occupied' ? 'Ocupado' : 'Disponible' }}
-                        </span>
-                    </a>
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full shrink-0 ml-2 {{ $unit->status === 'occupied' ? 'text-emerald-600 bg-emerald-50 dark:text-emerald-450 dark:bg-emerald-950/20' : 'text-slate-500 bg-slate-100 dark:text-slate-400 dark:bg-slate-750' }}">
+                                {{ $unit->status === 'occupied' ? 'Ocupado' : 'Disponible' }}
+                            </span>
+                        </a>
+
+                        <div class="flex items-center gap-1 shrink-0 border-l border-slate-200 dark:border-slate-700/80 pl-2">
+                            <a href="{{ route('units.edit', $unit) }}" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-xl transition" title="Editar Unidad">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            </a>
+
+                            <form action="{{ route('units.destroy', $unit) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar la unidad \'{{ $unit->name }}\'?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition" title="Eliminar Unidad">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 @empty
                     <p class="text-center py-8 text-slate-400 text-sm">Esta propiedad no tiene unidades creadas.</p>
                 @endforelse

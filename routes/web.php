@@ -9,6 +9,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\UserController;
 
 // Guest Auth Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -28,8 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
     Route::get('/import/template', [ImportController::class, 'downloadTemplate'])->name('import.template');
     
+    Route::post('/houses/{house}/archive', [HouseController::class, 'archive'])->name('houses.archive');
+    Route::post('/houses/{house}/unarchive', [HouseController::class, 'unarchive'])->name('houses.unarchive');
     Route::resource('houses', HouseController::class);
-    Route::resource('units', UnitController::class)->except(['index', 'destroy']);
+    Route::resource('units', UnitController::class)->except(['index']);
     Route::resource('tenants', TenantController::class);
+    Route::resource('users', UserController::class);
 });
 

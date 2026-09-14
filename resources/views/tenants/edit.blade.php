@@ -55,8 +55,9 @@
 
             <!-- Payment Due Day -->
             <div>
-                <label for="payment_due_day" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Día de Pago Vencimiento (1 - 28)</label>
-                <input type="number" name="payment_due_day" id="payment_due_day" min="1" max="28" required value="{{ old('payment_due_day', $tenant->payment_due_day) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                <label for="payment_due_day" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Día Límite de Pago (1 - 31)</label>
+                <input type="number" name="payment_due_day" id="payment_due_day" min="1" max="31" required value="{{ old('payment_due_day', $tenant->payment_due_day) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">En meses con menos días (como febrero o meses de 30 días), se ajustará automáticamente al último día de ese mes.</p>
                 @error('payment_due_day') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
 
@@ -82,6 +83,13 @@
                     <option value="0" {{ old('is_active', $tenant->is_active) == 0 ? 'selected' : '' }}>Inactivo (Contrato finalizado / desocupado)</option>
                 </select>
                 @error('is_active') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Notes & Schedules -->
+            <div>
+                <label for="notes" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Notas y Horarios (Opcional)</label>
+                <textarea name="notes" id="notes" rows="3" placeholder="Horarios de atención, acuerdos especiales, depósitos, observaciones..." class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">{{ old('notes', $tenant->notes) }}</textarea>
+                @error('notes') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
         </div>
 

@@ -11,13 +11,20 @@ use Illuminate\Support\Facades\Validator;
 
 class ImportController extends Controller
 {
+    protected function checkSuperAdmin()
+    {
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403, 'Acceso denegado. Solo el Super Administrador puede importar datos.');
+    }
+
     public function show()
     {
+        $this->checkSuperAdmin();
         return view('import');
     }
 
     public function downloadTemplate()
     {
+        $this->checkSuperAdmin();
         $headers = [
             'propiedad_nombre',
             'propiedad_direccion',
@@ -72,6 +79,8 @@ class ImportController extends Controller
 
     public function upload(Request $request)
     {
+        $this->checkSuperAdmin();
+
         $request->validate([
             'csv_file' => 'required|file|mimes:csv,txt|max:5120',
         ]);
@@ -251,7 +260,7 @@ class ImportController extends Controller
                             'phone' => $inquTelefono,
                             'email' => $inquEmail,
                             'start_date' => $startDate,
-                            'payment_due_day' => ($inquDiaPago >= 1 && $inquDiaPago <= 28) ? $inquDiaPago : 5,
+                            'payment_due_day' => ($inquDiaPago >= 1 && $inquDiaPago <= 31) ? $inquDiaPago : 5,
                             'is_active' => true,
                         ]);
 

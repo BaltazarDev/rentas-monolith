@@ -9,7 +9,7 @@ class Tenant extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['unit_id', 'full_name', 'phone', 'email', 'start_date', 'end_date', 'is_active', 'payment_due_day'];
+    protected $fillable = ['unit_id', 'full_name', 'phone', 'email', 'start_date', 'end_date', 'is_active', 'payment_due_day', 'notes'];
 
     public function unit()
     {

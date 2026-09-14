@@ -24,7 +24,33 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            try {
+                \App\Models\AccessLog::create([
+                    'user_id' => Auth::id(),
+                    'email' => $request->email,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'status' => 'success',
+                ]);
+            } catch (\Throwable $e) {
+                // Ignore logging failure to not block user
+            }
+
             return redirect()->intended('/dashboard');
+        }
+
+        try {
+            $matchingUser = \App\Models\User::where('email', $request->email)->first();
+            \App\Models\AccessLog::create([
+                'user_id' => $matchingUser ? $matchingUser->id : null,
+                'email' => $request->email,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'status' => 'failed',
+            ]);
+        } catch (\Throwable $e) {
+            // Ignore logging failure
         }
 
         return back()->withErrors([

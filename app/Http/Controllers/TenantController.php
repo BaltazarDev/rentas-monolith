@@ -34,7 +34,8 @@ class TenantController extends Controller
             'email' => 'nullable|email|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'payment_due_day' => 'required|integer|between:1,28',
+            'payment_due_day' => 'required|integer|between:1,31',
+            'notes' => 'nullable|string',
         ]);
 
         $tenant = Tenant::create([
@@ -45,6 +46,7 @@ class TenantController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'payment_due_day' => $request->payment_due_day,
+            'notes' => $request->notes,
             'is_active' => true,
         ]);
 
@@ -71,7 +73,8 @@ class TenantController extends Controller
             'email' => 'nullable|email|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'payment_due_day' => 'required|integer|between:1,28',
+            'payment_due_day' => 'required|integer|between:1,31',
+            'notes' => 'nullable|string',
             'is_active' => 'required|boolean',
         ]);
 
@@ -85,6 +88,7 @@ class TenantController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'payment_due_day' => $request->payment_due_day,
+            'notes' => $request->notes,
             'is_active' => $request->is_active,
         ]);
 

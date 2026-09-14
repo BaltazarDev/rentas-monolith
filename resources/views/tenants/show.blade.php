@@ -124,6 +124,25 @@
         </div>
     </div>
 
+    <!-- Notes & Schedules Section -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 space-y-2">
+        <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <span>📝</span> Notas, Horarios y Observaciones
+            </h3>
+            <a href="{{ route('tenants.edit', $tenant->id) }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                Editar Notas
+            </a>
+        </div>
+        @if($tenant->notes)
+            <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed bg-slate-50/50 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                {{ $tenant->notes }}
+            </p>
+        @else
+            <p class="text-xs text-slate-400 italic py-2">Sin notas u horarios registrados para este inquilino.</p>
+        @endif
+    </div>
+
     <!-- Payments History Card -->
     <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
@@ -145,6 +164,9 @@
                         <th class="px-6 py-4">Comprobante</th>
                         <th class="px-6 py-4">Notas</th>
                         <th class="px-6 py-4 text-right">Monto</th>
+                        @if(Auth::user()->isSuperAdmin())
+                            <th class="px-6 py-4 text-right">Acción</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700/80">
@@ -174,10 +196,18 @@
                             <td class="px-6 py-4 text-right font-extrabold text-sm text-emerald-600 dark:text-emerald-450">
                                 +${{ number_format($payment->amount, 2) }}
                             </td>
+                            @if(Auth::user()->isSuperAdmin())
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="Livewire.dispatch('openEditPaymentModal', { paymentId: {{ $payment->id }} })" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition" title="Editar Pago">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        Editar
+                                    </button>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 text-sm">
+                            <td colspan="{{ Auth::user()->isSuperAdmin() ? 6 : 5 }}" class="px-6 py-12 text-center text-slate-400 text-sm">
                                 No se han registrado pagos para este inquilino todavía.
                             </td>
                         </tr>

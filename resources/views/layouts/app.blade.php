@@ -111,35 +111,37 @@
                     Historial Financiero
                 </a>
                 
-                <a href="/import" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('import*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                    Carga Masiva (Excel)
-                </a>
-                
-                <a href="{{ route('database.backup') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100" onclick="return confirm('¿Estás seguro de que deseas exportar y descargar la base de datos actual?')">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    Exportar Base de Datos
-                </a>
+                @if(Auth::user()->isSuperAdmin())
+                    <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('users*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        Usuarios y Accesos
+                    </a>
 
-                <!-- PWA Install Button (Desktop) -->
-                <button type="button" onclick="installPwa()" class="pwa-install-btn hidden w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 text-indigo-600 dark:text-indigo-400 bg-indigo-50/80 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 mt-2 border border-indigo-200/50 dark:border-indigo-800/50 shadow-sm text-left">
-                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    <span>Instalar App</span>
-                </button>
+                    <a href="/import" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('import*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        Carga Masiva (Excel)
+                    </a>
+                    
+                    <a href="{{ route('database.backup') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100" onclick="return confirm('¿Estás seguro de que deseas exportar y descargar la base de datos actual?')">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Exportar Base de Datos
+                    </a>
+                @endif
             </nav>
             
             <!-- User Profile & Logout Section -->
             <div class="p-4 border-t border-slate-150 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                        <div class="w-10 h-10 rounded-full {{ Auth::user()->isSuperAdmin() ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 'bg-indigo-600 text-white' }} flex items-center justify-center font-bold text-sm">
                             {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
                         </div>
                         <div class="overflow-hidden">
                             <h4 class="text-sm font-semibold text-slate-850 dark:text-slate-200 truncate">{{ Auth::user()->name ?? 'Admin' }}</h4>
-                            <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email ?? '' }}</p>
+                            <p class="text-[10px] font-bold {{ Auth::user()->isSuperAdmin() ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400' }}">
+                                {{ Auth::user()->isSuperAdmin() ? '👑 Super Admin' : '🛡️ Admin' }}
+                            </p>
+                            <p class="text-[11px] text-slate-400 truncate">{{ Auth::user()->email ?? '' }}</p>
                         </div>
                     </div>
                     
@@ -197,14 +199,21 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </a>
 
-                    <!-- Add Import on mobile -->
-                    <a href="/import" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Carga Masiva (Excel)">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                    </a>
+                    @if(Auth::user()->isSuperAdmin())
+                        <!-- Add Users on mobile -->
+                        <a href="{{ route('users.index') }}" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Usuarios y Accesos">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        </a>
 
-                    <a href="{{ route('database.backup') }}" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Exportar Base de Datos" onclick="return confirm('¿Estás seguro de que deseas exportar y descargar la base de datos actual?')">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    </a>
+                        <!-- Add Import on mobile -->
+                        <a href="/import" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Carga Masiva (Excel)">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        </a>
+
+                        <a href="{{ route('database.backup') }}" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Exportar Base de Datos" onclick="return confirm('¿Estás seguro de que deseas exportar y descargar la base de datos actual?')">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        </a>
+                    @endif
                     
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
@@ -296,6 +305,7 @@
 
     <!-- Livewire Transaction Modal Component -->
     @livewire('transaction-modal')
+    @livewire('edit-payment-modal')
 
     <!-- Livewire Scripts -->
     @livewireScripts

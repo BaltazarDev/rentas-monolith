@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Administrador',
                 'password' => \Illuminate\Support\Facades\Hash::make('Gundam84'),
+                'role' => 'super_admin',
             ]
         );
 
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Administrador 2',
                 'password' => \Illuminate\Support\Facades\Hash::make('#Rentas2531&'),
+                'role' => 'super_admin',
             ]
         );
     }

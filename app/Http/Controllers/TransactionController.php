@@ -20,7 +20,7 @@ class TransactionController extends Controller
         $type = $request->input('type'); // 'income', 'expense', or null (all)
 
         // 1. Fetch Income (Payments)
-        $paymentsQuery = Payment::with('unit.house')
+        $paymentsQuery = Payment::with(['unit.house', 'unit.tenant'])
             ->whereBetween('payment_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
 
         if ($houseId) {
@@ -32,13 +32,14 @@ class TransactionController extends Controller
         $payments = [];
         if (!$type || $type === 'income') {
             $payments = $paymentsQuery->get()->map(function ($item) {
+                $tenantName = ($item->unit && $item->unit->tenant) ? ' (' . $item->unit->tenant->full_name . ')' : '';
                 return [
                     'id' => $item->id,
                     'tx_type' => 'income',
                     'category' => $item->type === 'rent' ? 'Renta' : 'Servicios',
                     'amount' => $item->amount,
                     'date' => $item->payment_date,
-                    'title' => ($item->unit->house->name ?? 'Casa') . ' - ' . ($item->unit->name ?? 'Unidad'),
+                    'title' => ($item->unit->house->name ?? 'Casa') . ' - ' . ($item->unit->name ?? 'Unidad') . $tenantName,
                     'notes' => $item->notes,
                     'receipt_url' => $item->receipt_url,
                 ];

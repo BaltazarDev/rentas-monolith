@@ -22,7 +22,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
+    /**
+     * Determine if the user is a super administrator.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return ($this->role ?? null) === 'super_admin'
+            || in_array(strtolower($this->email ?? ''), ['sistemascreativos@hotmail.com', 'bgdevsoft@gmail.com']);
+    }
+
+    /**
+     * Get the access logs for the user.
+     */
+    public function accessLogs()
+    {
+        return $this->hasMany(AccessLog::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

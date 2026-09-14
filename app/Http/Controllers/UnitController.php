@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\House;
 use App\Models\Unit;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UnitController extends Controller
 {
     public function create(Request $request)
     {
         $house_id = $request->query('house_id');
-        $houses = House::all();
+        $houses = House::active()->get();
         return view('units.create', compact('houses', 'house_id'));
     }
 
@@ -45,7 +47,9 @@ class UnitController extends Controller
 
     public function edit(Unit $unit)
     {
-        $houses = House::all();
+        $houses = House::where(function($q) use ($unit) {
+            $q->where('is_archived', false)->orWhere('id', $unit->house_id);
+        })->get();
         return view('units.edit', compact('unit', 'houses'));
     }
 
@@ -68,5 +72,33 @@ class UnitController extends Controller
         ]);
 
         return redirect()->route('units.show', $unit)->with('success', 'Unidad actualizada con éxito.');
+    }
+
+    public function destroy(Unit $unit)
+    {
+        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede eliminar unidades.');
+
+        $houseId = $unit->house_id;
+
+        try {
+            DB::transaction(function () use ($unit) {
+                // Desvincular inquilinos activos asignados a esta unidad
+                Tenant::where('unit_id', $unit->id)->update([
+                    'unit_id' => null,
+                    'is_active' => false
+                ]);
+
+                // Eliminar pagos y gastos asociados a esta unidad
+                $unit->payments()->delete();
+                $unit->expenses()->delete();
+
+                // Eliminar la unidad
+                $unit->delete();
+            });
+
+            return redirect()->route('houses.show', $houseId)->with('success', 'Departamento/Unidad eliminada con éxito.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al eliminar el departamento: ' . $e->getMessage());
+        }
     }
 }

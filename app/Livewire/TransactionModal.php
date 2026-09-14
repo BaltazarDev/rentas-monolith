@@ -35,7 +35,7 @@ class TransactionModal extends Component
     public function mount()
     {
         $this->date = date('Y-m-d');
-        $this->houses = House::orderBy('name')->get()->toArray();
+        $this->houses = House::active()->orderBy('name')->get()->toArray();
         $this->units = Unit::with('house')->orderBy('name')->get()->toArray();
     }
 

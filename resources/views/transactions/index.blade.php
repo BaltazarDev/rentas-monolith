@@ -117,6 +117,9 @@
                         <th class="px-6 py-4">Concepto / Notas</th>
                         <th class="px-6 py-4">Comprobante</th>
                         <th class="px-6 py-4 text-right">Monto</th>
+                        @if(Auth::user()->isSuperAdmin())
+                            <th class="px-6 py-4 text-right">Acción</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700/80">
@@ -152,10 +155,22 @@
                             <td class="px-6 py-4 text-right font-extrabold text-sm {{ $tx['tx_type'] === 'income' ? 'text-emerald-600 dark:text-emerald-450' : 'text-rose-600 dark:text-rose-450' }}">
                                 {{ $tx['tx_type'] === 'income' ? '+' : '-' }}${{ number_format($tx['amount'], 2) }}
                             </td>
+                            @if(Auth::user()->isSuperAdmin())
+                                <td class="px-6 py-4 text-right">
+                                    @if($tx['tx_type'] === 'income')
+                                        <button onclick="Livewire.dispatch('openEditPaymentModal', { paymentId: {{ $tx['id'] }} })" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition" title="Editar Pago">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                            Editar
+                                        </button>
+                                    @else
+                                        <span class="text-xs text-slate-300 dark:text-slate-600">-</span>
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-400 text-sm font-medium">
+                            <td colspan="{{ Auth::user()->isSuperAdmin() ? 7 : 6 }}" class="px-6 py-12 text-center text-slate-400 text-sm font-medium">
                                 No se encontraron movimientos en este periodo.
                             </td>
                         </tr>

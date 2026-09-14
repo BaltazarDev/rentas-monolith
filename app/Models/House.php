@@ -6,7 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class House extends Model
 {
-    protected $fillable = ['name', 'address', 'map_url', 'embed_map_url', 'photo_url', 'description'];
+    protected $fillable = ['name', 'address', 'map_url', 'embed_map_url', 'photo_url', 'description', 'is_archived'];
+
+    protected $casts = [
+        'is_archived' => 'boolean',
+    ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_archived', false);
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->where('is_archived', true);
+    }
 
     public function units()
     {
@@ -18,3 +32,4 @@ class House extends Model
         return $this->hasMany(Expense::class);
     }
 }
+

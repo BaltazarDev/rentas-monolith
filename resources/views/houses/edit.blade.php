@@ -3,14 +3,46 @@
 @section('content')
 <div class="max-w-3xl mx-auto space-y-8 animate-fade-in">
     <!-- Header -->
-    <div class="flex items-center gap-3">
-        <a href="{{ route('houses.show', $house) }}" class="p-2 text-slate-400 hover:text-slate-650 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-        </a>
-        <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">Editar Propiedad</h1>
-            <p class="text-sm text-slate-550 dark:text-slate-400 mt-1">Actualiza los detalles de "{{ $house->name }}".</p>
+    <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('houses.show', $house) }}" class="p-2 text-slate-400 hover:text-slate-650 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+            </a>
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">Editar Propiedad</h1>
+                <p class="text-sm text-slate-550 dark:text-slate-400 mt-1">Actualiza los detalles de "{{ $house->name }}".</p>
+            </div>
         </div>
+
+        @if(Auth::check() && Auth::user()->isSuperAdmin())
+            <div class="flex items-center gap-2">
+                @if($house->is_archived)
+                    <form action="{{ route('houses.unarchive', $house) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 rounded-xl transition" title="Restaurar / Activar Propiedad">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.033 8.033 0 01-15.357-2m15.357 2H15" /></svg>
+                            Restaurar
+                        </button>
+                    </form>
+                @else
+                    <form action="{{ route('houses.archive', $house) }}" method="POST" onsubmit="return confirm('¿Deseas archivar la propiedad \'{{ $house->name }}\'? Ocultará la propiedad pero conservará todo el historial.')">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 rounded-xl transition" title="Archivar Propiedad">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                            Archivar
+                        </button>
+                    </form>
+                @endif
+
+                <form action="{{ route('houses.destroy', $house) }}" method="POST" onsubmit="return confirm('ADVERTENCIA: ¿Estás seguro de eliminar definitivamente esta propiedad y todas sus unidades asociadas? Esta acción destruirá registros de pagos e inquilinos.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="p-2.5 text-rose-500 hover:text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 rounded-xl transition" title="Eliminar Propiedad Definitivamente (Super Admin)">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 
     <!-- Form -->

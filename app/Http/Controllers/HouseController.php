@@ -4,19 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\House;
 use App\Models\Unit;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HouseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $houses = House::withCount([
+        $status = $request->query('status', 'active');
+        $activeCount = House::active()->count();
+        $archivedCount = House::archived()->count();
+
+        $query = ($status === 'archived') ? House::archived() : House::active();
+
+        $houses = $query->withCount([
             'units as total_units_count',
             'units as occupied_units_count' => function ($query) {
                 $query->where('status', 'occupied');
             }
         ])->get();
-        return view('houses.index', compact('houses'));
+
+        return view('houses.index', compact('houses', 'status', 'activeCount', 'archivedCount'));
     }
 
     public function create()
@@ -39,7 +48,7 @@ class HouseController extends Controller
             'units.*.base_rent_cost' => 'required|numeric|min:0',
         ]);
 
-        $photoUrl = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80';
+        $photoUrl = null;
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('houses', 'public');
             $photoUrl = '/storage/' . $path;
@@ -110,9 +119,51 @@ class HouseController extends Controller
         return redirect()->route('houses.show', $house)->with('success', 'Propiedad actualizada con éxito.');
     }
 
+    public function archive(House $house)
+    {
+        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede archivar propiedades.');
+
+        $house->update(['is_archived' => true]);
+
+        return redirect()->route('houses.index')->with('success', 'Propiedad archivada con éxito. Todos sus datos históricos se mantienen seguros.');
+    }
+
+    public function unarchive(House $house)
+    {
+        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede desarchivar propiedades.');
+
+        $house->update(['is_archived' => false]);
+
+        return redirect()->route('houses.show', $house)->with('success', 'Propiedad restaurada y activa nuevamente.');
+    }
+
     public function destroy(House $house)
     {
-        $house->delete();
-        return redirect()->route('houses.index')->with('success', 'Propiedad eliminada con éxito.');
+        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede eliminar propiedades.');
+
+        try {
+            DB::transaction(function () use ($house) {
+                // Eliminar unidades y sus relaciones (pagos, gastos, inquilinos)
+                foreach ($house->units as $unit) {
+                    Tenant::where('unit_id', $unit->id)->update([
+                        'unit_id' => null,
+                        'is_active' => false
+                    ]);
+                    $unit->payments()->delete();
+                    $unit->expenses()->delete();
+                    $unit->delete();
+                }
+
+                // Eliminar gastos directos de la propiedad
+                $house->expenses()->delete();
+
+                // Eliminar la propiedad
+                $house->delete();
+            });
+
+            return redirect()->route('houses.index')->with('success', 'Propiedad y todas sus unidades eliminadas con éxito.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al eliminar la propiedad: ' . $e->getMessage());
+        }
     }
 }
