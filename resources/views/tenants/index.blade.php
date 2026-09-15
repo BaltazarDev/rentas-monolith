@@ -90,7 +90,7 @@
                                     @can('payments.create')
                                         @if($tenant->unit_id)
                                             <button 
-                                                onclick="Livewire.dispatch('openTransactionModal', {type: 'payment', unitId: '{{ $tenant->unit_id }}'})" 
+                                                onclick="openTransactionModal('payment', '', '{{ $tenant->unit_id }}')" 
                                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-450 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 transition shadow-sm"
                                                 title="Registrar cobro de renta para este inquilino"
                                             >

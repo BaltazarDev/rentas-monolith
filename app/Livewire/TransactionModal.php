@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
 use App\Models\House;
 use App\Models\Unit;
 use App\Models\Payment;
@@ -40,6 +41,7 @@ class TransactionModal extends Component
         $this->units = Unit::with(['house', 'tenant'])->orderBy('name')->get()->toArray();
     }
 
+    #[On('openTransactionModal')]
     public function open($type = 'payment', $houseId = '', $unitId = '')
     {
         if (is_array($type)) {

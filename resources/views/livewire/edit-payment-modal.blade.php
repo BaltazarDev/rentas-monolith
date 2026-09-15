@@ -1,7 +1,7 @@
 <div>
     @if($isOpen)
         <!-- Modal Overlay -->
-        <div class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+        <div class="fixed inset-0 z-[70] overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
             <!-- Modal Box -->
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 flex flex-col border border-slate-100 dark:border-slate-700">
                 <!-- Header -->

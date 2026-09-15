@@ -260,38 +260,40 @@
                 {{ $slot ?? '' }}
                 @yield('content')
             </div>
-            
-            <!-- Global Floating Transaction Buttons -->
-            <div class="fixed right-4 bottom-20 md:right-8 md:bottom-8 z-40 flex flex-col items-end gap-2.5 pointer-events-none">
-                @can('expenses.create')
-                <!-- Botón Registrar Gasto de Propiedad (Egreso) -->
-                <button 
-                    onclick="Livewire.dispatch('openTransactionModal', {type: 'expense'})" 
-                    class="pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white shadow-xl shadow-rose-600/30 border border-rose-500/50 transition-all duration-200 group focus:outline-none"
-                    title="Registrar Gasto de Propiedad"
-                >
-                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-xs font-bold tracking-wide hidden sm:inline-block">Registrar Gasto</span>
-                </button>
-                @endcan
-
-                @can('payments.create')
-                <!-- Botón Registrar Cobro / Ingreso de Renta -->
-                <button 
-                    onclick="Livewire.dispatch('openTransactionModal', {type: 'payment'})" 
-                    class="pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xl shadow-emerald-600/35 border border-emerald-500/50 transition-all duration-200 group focus:outline-none"
-                    title="Registrar Ingreso de Renta"
-                >
-                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span class="text-xs font-bold tracking-wide">Cobrar Renta</span>
-                </button>
-                @endcan
-            </div>
         </main>
+    </div>
+
+    <!-- Global Floating Transaction Buttons -->
+    <div class="fixed right-4 bottom-20 md:right-8 md:bottom-8 z-40 flex flex-col items-end gap-2.5 pointer-events-auto">
+        @can('expenses.create')
+        <!-- Botón Registrar Gasto de Propiedad (Egreso) -->
+        <button 
+            type="button"
+            onclick="openTransactionModal('expense')" 
+            class="flex items-center gap-2.5 px-4 py-3 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white shadow-xl shadow-rose-600/35 border border-rose-500/50 transition-all duration-200 group focus:outline-none cursor-pointer select-none"
+            title="Registrar Gasto de Propiedad"
+        >
+            <svg class="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+            </svg>
+            <span class="text-xs font-bold tracking-wide">Registrar Gasto</span>
+        </button>
+        @endcan
+
+        @can('payments.create')
+        <!-- Botón Registrar Cobro / Ingreso de Renta -->
+        <button 
+            type="button"
+            onclick="openTransactionModal('payment')" 
+            class="flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xl shadow-emerald-600/35 border border-emerald-500/50 transition-all duration-200 group focus:outline-none cursor-pointer select-none"
+            title="Registrar Ingreso de Renta"
+        >
+            <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span class="text-xs font-bold tracking-wide">Cobrar Renta</span>
+        </button>
+        @endcan
     </div>
 
     <!-- Bottom Navigation Bar (Mobile / Tablet Only) -->
@@ -413,6 +415,48 @@
             console.log('PWA instalada con éxito');
             document.querySelectorAll('.pwa-install-btn').forEach(el => el.classList.add('hidden'));
         });
+
+        function openTransactionModal(type, houseId = '', unitId = '') {
+            const comp = window.Livewire?.all ? window.Livewire.all().find(c => c.name === 'transaction-modal') : null;
+            if (comp && comp.$wire) {
+                comp.$wire.open(type, houseId, unitId);
+                return;
+            }
+            if (window.Livewire) {
+                window.Livewire.dispatch('openTransactionModal', { type: type, houseId: houseId, unitId: unitId });
+            } else {
+                document.addEventListener('livewire:init', () => {
+                    const c = window.Livewire?.all ? window.Livewire.all().find(x => x.name === 'transaction-modal') : null;
+                    if (c && c.$wire) {
+                        c.$wire.open(type, houseId, unitId);
+                    } else {
+                        window.Livewire.dispatch('openTransactionModal', { type: type, houseId: houseId, unitId: unitId });
+                    }
+                }, { once: true });
+            }
+        }
+        window.openTransactionModal = openTransactionModal;
+
+        function openEditPaymentModal(paymentId) {
+            const comp = window.Livewire?.all ? window.Livewire.all().find(c => c.name === 'edit-payment-modal') : null;
+            if (comp && comp.$wire) {
+                comp.$wire.open(paymentId);
+                return;
+            }
+            if (window.Livewire) {
+                window.Livewire.dispatch('openEditPaymentModal', { paymentId: paymentId });
+            } else {
+                document.addEventListener('livewire:init', () => {
+                    const c = window.Livewire?.all ? window.Livewire.all().find(x => x.name === 'edit-payment-modal') : null;
+                    if (c && c.$wire) {
+                        c.$wire.open(paymentId);
+                    } else {
+                        window.Livewire.dispatch('openEditPaymentModal', { paymentId: paymentId });
+                    }
+                }, { once: true });
+            }
+        }
+        window.openEditPaymentModal = openEditPaymentModal;
 
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');

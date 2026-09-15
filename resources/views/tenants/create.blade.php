@@ -70,7 +70,7 @@
                     <input 
                         type="text" 
                         id="unit-search-input" 
-                        placeholder="🔍 Buscar por nombre de unidad o casa..." 
+                        placeholder="Buscar por nombre de unidad o casa..." 
                         class="w-full rounded-xl border border-slate-200 dark:border-slate-700 pl-10 pr-9 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-xs focus:outline-none"
                     >
                     <button 

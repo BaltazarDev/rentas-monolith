@@ -1,7 +1,7 @@
 <div>
     @if($isOpen)
         <!-- Modal Overlay -->
-        <div class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+        <div class="fixed inset-0 z-[70] overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
             <!-- Modal Box -->
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all scale-100 flex flex-col border border-slate-100 dark:border-slate-700">
                 <!-- Header -->
@@ -97,7 +97,7 @@
                                     <input 
                                         type="text" 
                                         wire:model.live.debounce.150ms="unitSearch" 
-                                        placeholder="🔍 Escribe depto, casa o inquilino..." 
+                                        placeholder="Escribe depto, casa o inquilino..." 
                                         class="w-full rounded-xl border border-slate-300 dark:border-slate-600 pl-10 pr-9 py-2.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-xs"
                                     >
                                     @if($unitSearch)

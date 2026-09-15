@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
 use App\Models\Payment;
 use App\Models\Unit;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,7 @@ class EditPaymentModal extends Component
 
     protected $listeners = ['openEditPaymentModal' => 'open'];
 
+    #[On('openEditPaymentModal')]
     public function open($paymentId)
     {
         // Enforce Super Admin authorization
