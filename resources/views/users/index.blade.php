@@ -80,9 +80,23 @@
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50">
                                             👑 Super Administrador
                                         </span>
+                                    @elseif($user->role === 'custom')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-900/40">
+                                            ⚙️ Personalizado ({{ count($user->getEffectivePermissions()) }} perms)
+                                        </span>
+                                    @elseif($user->isOperator())
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/40">
+                                            📋 Operador
+                                            @if($user->hasCustomPermissions())
+                                                <span class="text-[10px] font-semibold opacity-75">({{ count($user->getEffectivePermissions()) }} perms)</span>
+                                            @endif
+                                        </span>
                                     @else
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/40">
                                             🛡️ Administrador
+                                            @if($user->hasCustomPermissions())
+                                                <span class="text-[10px] font-semibold opacity-75">({{ count($user->getEffectivePermissions()) }} perms)</span>
+                                            @endif
                                         </span>
                                     @endif
                                 </td>

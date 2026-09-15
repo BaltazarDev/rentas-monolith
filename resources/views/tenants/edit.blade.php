@@ -40,16 +40,92 @@
                 @error('email') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
 
-            <!-- Unit assignment -->
+            <!-- Unit assignment with Search -->
             <div>
-                <label for="unit_id" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Departamento / Local</label>
-                <select name="unit_id" id="unit_id" required class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-805 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <label for="unit-search-input" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Departamento / Local
+                    </label>
+                    <span id="unit-count-badge" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                        {{ count($units) }} disponibles
+                    </span>
+                </div>
+
+                <!-- Hidden select for form submission -->
+                <select name="unit_id" id="unit_id" required class="sr-only">
+                    <option value="">Selecciona una unidad</option>
                     @foreach($units as $u)
                         <option value="{{ $u->id }}" {{ old('unit_id', $tenant->unit_id) == $u->id ? 'selected' : '' }}>
                             {{ $u->name }} ({{ $u->house->name ?? 'Casa' }}) - ${{ number_format($u->base_rent_cost) }}/mes
                         </option>
                     @endforeach
                 </select>
+
+                <!-- Search input -->
+                <div class="relative mb-2.5">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="unit-search-input" 
+                        placeholder="🔍 Buscar por nombre de unidad o casa..." 
+                        class="w-full rounded-xl border border-slate-200 dark:border-slate-700 pl-10 pr-9 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-xs focus:outline-none"
+                    >
+                    <button 
+                        type="button" 
+                        id="unit-search-clear" 
+                        onclick="clearUnitSearch()" 
+                        class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Scrollable list of unit cards (mobile friendly) -->
+                <div id="unit-options-list" class="max-h-52 overflow-y-auto space-y-1.5 p-1 rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/40 dark:bg-slate-900/30">
+                    @foreach($units as $u)
+                        @php
+                            $isSelected = (old('unit_id', $tenant->unit_id) == $u->id);
+                        @endphp
+                        <div 
+                            class="unit-option-card cursor-pointer p-3 rounded-xl border transition-all duration-150 flex items-center justify-between gap-3 {{ $isSelected ? 'bg-indigo-50 border-indigo-300 dark:bg-indigo-950/60 dark:border-indigo-700 ring-2 ring-indigo-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700/70 hover:border-indigo-200 dark:hover:border-slate-600' }}"
+                            data-id="{{ $u->id }}"
+                            data-search="{{ mb_strtolower($u->name . ' ' . ($u->house->name ?? '') . ' ' . $u->base_rent_cost, 'UTF-8') }}"
+                            onclick="selectUnitOption({{ $u->id }})"
+                        >
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-8 h-8 rounded-lg {{ $isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center font-bold text-xs shrink-0">
+                                    {{ $u->type === 'commercial' ? '🏪' : '🚪' }}
+                                </span>
+                                <div class="min-w-0">
+                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100 block truncate">
+                                        {{ $u->name }}
+                                    </span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+                                        📍 {{ $u->house->name ?? 'Casa' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+                                    ${{ number_format($u->base_rent_cost) }}<span class="text-[10px] font-normal text-slate-400">/m</span>
+                                </span>
+                                <span class="unit-check w-5 h-5 rounded-full {{ $isSelected ? 'bg-indigo-600 text-white flex' : 'border border-slate-300 dark:border-slate-600 hidden' }} items-center justify-center text-[10px] font-bold">
+                                    ✓
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <div id="unit-no-results" class="hidden p-6 text-center text-xs text-slate-400">
+                        No se encontraron unidades que coincidan con la búsqueda.
+                    </div>
+                </div>
+
                 @error('unit_id') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
 
@@ -99,4 +175,75 @@
         </button>
     </form>
 </div>
+
+<script>
+    function selectUnitOption(id) {
+        const select = document.getElementById('unit_id');
+        select.value = id;
+
+        document.querySelectorAll('.unit-option-card').forEach(card => {
+            const isTarget = card.getAttribute('data-id') == id;
+            const check = card.querySelector('.unit-check');
+            const icon = card.querySelector('.w-8');
+
+            if (isTarget) {
+                card.className = 'unit-option-card cursor-pointer p-3 rounded-xl border transition-all duration-150 flex items-center justify-between gap-3 bg-indigo-50 border-indigo-300 dark:bg-indigo-950/60 dark:border-indigo-700 ring-2 ring-indigo-500/20';
+                if (check) { check.className = 'unit-check w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold'; }
+                if (icon) { icon.className = 'w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0'; }
+            } else {
+                card.className = 'unit-option-card cursor-pointer p-3 rounded-xl border transition-all duration-150 flex items-center justify-between gap-3 bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700/70 hover:border-indigo-200 dark:hover:border-slate-600';
+                if (check) { check.className = 'unit-check w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 hidden items-center justify-center text-[10px] font-bold'; }
+                if (icon) { icon.className = 'w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 flex items-center justify-center font-bold text-xs shrink-0'; }
+            }
+        });
+    }
+
+    const searchInput = document.getElementById('unit-search-input');
+    const clearBtn = document.getElementById('unit-search-clear');
+    const noResults = document.getElementById('unit-no-results');
+    const countBadge = document.getElementById('unit-count-badge');
+    const cards = document.querySelectorAll('.unit-option-card');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            cards.forEach(card => {
+                const text = card.getAttribute('data-search') || '';
+                if (!query || text.includes(query)) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            if (countBadge) {
+                countBadge.textContent = visibleCount + ' disponibles';
+            }
+        });
+    }
+
+    function clearUnitSearch() {
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.focus();
+        }
+    }
+</script>
 @endsection
+

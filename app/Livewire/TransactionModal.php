@@ -29,6 +29,7 @@ class TransactionModal extends Component
     // Lists
     public $houses = [];
     public $units = [];
+    public $unitSearch = '';
 
     protected $listeners = ['openTransactionModal' => 'open'];
 
@@ -36,14 +37,22 @@ class TransactionModal extends Component
     {
         $this->date = date('Y-m-d');
         $this->houses = House::active()->orderBy('name')->get()->toArray();
-        $this->units = Unit::with('house')->orderBy('name')->get()->toArray();
+        $this->units = Unit::with(['house', 'tenant'])->orderBy('name')->get()->toArray();
     }
 
     public function open($type = 'payment', $houseId = '', $unitId = '')
     {
+        if (is_array($type)) {
+            $params = $type;
+            $type = $params['type'] ?? 'payment';
+            $houseId = $params['houseId'] ?? ($params['house_id'] ?? '');
+            $unitId = $params['unitId'] ?? ($params['unit_id'] ?? '');
+        }
+
         $this->txType = $type;
         $this->houseId = $houseId;
         $this->unitId = $unitId;
+        $this->unitSearch = '';
         $this->amount = 0;
         $this->date = date('Y-m-d');
         $this->notes = '';
@@ -62,6 +71,12 @@ class TransactionModal extends Component
 
     public function save()
     {
+        if ($this->txType === 'payment') {
+            abort_unless(auth()->check() && auth()->user()->can('payments.create'), 403, 'No tienes permisos para registrar cobros.');
+        } else {
+            abort_unless(auth()->check() && auth()->user()->can('expenses.create'), 403, 'No tienes permisos para registrar gastos.');
+        }
+
         $rules = [
             'amount' => 'required|numeric|min:0.01',
             'date' => 'required|date',
@@ -115,6 +130,52 @@ class TransactionModal extends Component
         
         // Refresh the page
         return redirect(request()->header('Referer'));
+    }
+
+    public function selectUnit($id)
+    {
+        $this->unitId = $id;
+        $this->unitSearch = '';
+    }
+
+    public function clearUnit()
+    {
+        $this->unitId = '';
+        $this->unitSearch = '';
+    }
+
+    public function getSelectedUnitProperty()
+    {
+        if (!$this->unitId) {
+            return null;
+        }
+
+        return collect($this->units)->first(function ($u) {
+            return (string)$u['id'] === (string)$this->unitId;
+        });
+    }
+
+    public function getFilteredUnitsProperty()
+    {
+        return collect($this->units)->filter(function ($u) {
+            // If houseId is set (for expenses), only show units of that house
+            if ($this->houseId && (string)($u['house_id'] ?? '') !== (string)$this->houseId) {
+                return false;
+            }
+
+            if (empty(trim($this->unitSearch))) {
+                return true;
+            }
+
+            $search = mb_strtolower(trim($this->unitSearch), 'UTF-8');
+            $unitName = mb_strtolower($u['name'] ?? '', 'UTF-8');
+            $houseName = mb_strtolower($u['house']['name'] ?? '', 'UTF-8');
+            $tenantName = mb_strtolower($u['tenant']['full_name'] ?? '', 'UTF-8');
+
+            return str_contains($unitName, $search)
+                || str_contains($houseName, $search)
+                || str_contains($tenantName, $search);
+        })->values()->all();
     }
 
     public function render()

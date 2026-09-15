@@ -29,8 +29,8 @@ class EditPaymentModal extends Component
     public function open($paymentId)
     {
         // Enforce Super Admin authorization
-        if (!auth()->check() || !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Acceso denegado. Se requieren permisos de Super Administrador.');
+        if (!auth()->check() || (!auth()->user()->isSuperAdmin() && !auth()->user()->can('payments.edit'))) {
+            abort(403, 'Acceso denegado. No tienes permisos para editar transacciones.');
         }
 
         $payment = Payment::with('unit.house', 'unit.tenant')->findOrFail($paymentId);
@@ -74,8 +74,8 @@ class EditPaymentModal extends Component
 
     public function save()
     {
-        if (!auth()->check() || !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Acceso denegado. Se requieren permisos de Super Administrador.');
+        if (!auth()->check() || (!auth()->user()->isSuperAdmin() && !auth()->user()->can('payments.edit'))) {
+            abort(403, 'Acceso denegado. No tienes permisos para editar transacciones.');
         }
 
         $this->validate([

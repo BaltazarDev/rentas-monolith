@@ -12,6 +12,7 @@ class UnitController extends Controller
 {
     public function create(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('units.create'), 403, 'Acceso denegado. No tienes permisos para crear unidades.');
         $house_id = $request->query('house_id');
         $houses = House::active()->get();
         return view('units.create', compact('houses', 'house_id'));
@@ -19,6 +20,8 @@ class UnitController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('units.create'), 403, 'Acceso denegado. No tienes permisos para crear unidades.');
+
         $request->validate([
             'house_id' => 'required|exists:houses,id',
             'name' => 'required|string|max:255',
@@ -47,6 +50,7 @@ class UnitController extends Controller
 
     public function edit(Unit $unit)
     {
+        abort_unless(auth()->check() && auth()->user()->can('units.edit'), 403, 'Acceso denegado. No tienes permisos para editar unidades.');
         $houses = House::where(function($q) use ($unit) {
             $q->where('is_archived', false)->orWhere('id', $unit->house_id);
         })->get();
@@ -55,6 +59,8 @@ class UnitController extends Controller
 
     public function update(Request $request, Unit $unit)
     {
+        abort_unless(auth()->check() && auth()->user()->can('units.edit'), 403, 'Acceso denegado. No tienes permisos para editar unidades.');
+
         $request->validate([
             'house_id' => 'required|exists:houses,id',
             'name' => 'required|string|max:255',
@@ -76,7 +82,7 @@ class UnitController extends Controller
 
     public function destroy(Unit $unit)
     {
-        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede eliminar unidades.');
+        abort_unless(auth()->check() && (auth()->user()->isSuperAdmin() || auth()->user()->can('units.delete')), 403, 'No tienes permisos para eliminar unidades.');
 
         $houseId = $unit->house_id;
 

@@ -15,19 +15,21 @@
         </div>
         
         <div class="flex items-center gap-2">
-            <a href="{{ route('units.edit', $unit) }}" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-xl transition" title="Editar Unidad">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-            </a>
+            @can('units.edit')
+                <a href="{{ route('units.edit', $unit) }}" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-xl transition" title="Editar Unidad">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                </a>
+            @endcan
 
-            @if(Auth::check() && Auth::user()->isSuperAdmin())
+            @can('units.delete')
                 <form action="{{ route('units.destroy', $unit) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar la unidad \'{{ $unit->name }}\'? Esta acción no se puede deshacer y borrará los pagos y registros asociados.')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition" title="Eliminar Unidad (Super Admin)">
+                    <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition" title="Eliminar Unidad">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 </form>
-            @endif
+            @endcan
         </div>
     </div>
 
@@ -51,7 +53,9 @@
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 space-y-4">
             <div class="flex justify-between items-center">
                 <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Detalles del Inquilino</h3>
-                <a href="{{ route('tenants.edit', $unit->tenant->id) }}" class="text-xs font-semibold text-indigo-650 dark:text-indigo-400 hover:underline">Editar</a>
+                @can('tenants.edit')
+                    <a href="{{ route('tenants.edit', $unit->tenant->id) }}" class="text-xs font-semibold text-indigo-650 dark:text-indigo-400 hover:underline">Editar</a>
+                @endcan
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -105,10 +109,12 @@
                 <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Unidad Disponible</h3>
                 <p class="text-xs text-slate-450 dark:text-slate-500 max-w-xs mx-auto">Esta unidad se encuentra vacía y lista para recibir a un nuevo inquilino.</p>
             </div>
-            <a href="{{ route('tenants.create', ['unit_id' => $unit->id]) }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 font-semibold text-xs transition">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                Asignar Inquilino
-            </a>
+            @can('tenants.create')
+                <a href="{{ route('tenants.create', ['unit_id' => $unit->id]) }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 font-semibold text-xs transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    Asignar Inquilino
+                </a>
+            @endcan
         </div>
     @endif
 
@@ -116,10 +122,12 @@
     <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 space-y-4">
         <div class="flex justify-between items-center">
             <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Historial de Pagos</h3>
+            @can('payments.create')
             <button onclick="Livewire.dispatch('openTransactionModal', {type: 'payment', houseId: '', unitId: '{{ $unit->id }}'})" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-650 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-450 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 transition">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 Registrar Pago
             </button>
+            @endcan
         </div>
 
         <div class="space-y-3.5">

@@ -91,55 +91,67 @@
             
             <!-- Navigation Links -->
             <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-                <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('dashboard') || request()->is('/') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" /></svg>
-                    Dashboard
-                </a>
+                @can('dashboard.view')
+                    <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('dashboard') || request()->is('/') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" /></svg>
+                        Dashboard
+                    </a>
+                @endcan
                 
+                @can('houses.view')
                 <a href="/houses" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('houses*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                     Propiedades
                 </a>
+                @endcan
                 
+                @can('tenants.view')
                 <a href="/tenants" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('tenants*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     Inquilinos
                 </a>
+                @endcan
 
-                <a href="/transactions" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('transactions*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Historial Financiero
-                </a>
+                @can('transactions.view')
+                    <a href="/transactions" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('transactions*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        Historial Financiero
+                    </a>
+                @endcan
                 
-                @if(Auth::user()->isSuperAdmin())
+                @can('users.manage')
                     <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('users*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                         Usuarios y Accesos
                     </a>
+                @endcan
 
+                @can('import.data')
                     <a href="/import" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 {{ request()->is('import*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         Carga Masiva (Excel)
                     </a>
+                @endcan
                     
+                @can('database.backup')
                     <a href="{{ route('database.backup') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition duration-200 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-100" onclick="return confirm('¿Estás seguro de que deseas exportar y descargar la base de datos actual?')">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         Exportar Base de Datos
                     </a>
-                @endif
+                @endcan
             </nav>
             
             <!-- User Profile & Logout Section -->
             <div class="p-4 border-t border-slate-150 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full {{ Auth::user()->isSuperAdmin() ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 'bg-indigo-600 text-white' }} flex items-center justify-center font-bold text-sm">
+                        <div class="w-10 h-10 rounded-full {{ Auth::user()->isSuperAdmin() ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : (Auth::user()->isOperator() ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : (Auth::user()->role === 'custom' ? 'bg-purple-500/20 text-purple-600 dark:text-purple-400' : 'bg-indigo-600 text-white')) }} flex items-center justify-center font-bold text-sm">
                             {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
                         </div>
                         <div class="overflow-hidden">
                             <h4 class="text-sm font-semibold text-slate-850 dark:text-slate-200 truncate">{{ Auth::user()->name ?? 'Admin' }}</h4>
-                            <p class="text-[10px] font-bold {{ Auth::user()->isSuperAdmin() ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400' }}">
-                                {{ Auth::user()->isSuperAdmin() ? '👑 Super Admin' : '🛡️ Admin' }}
+                            <p class="text-[10px] font-bold {{ Auth::user()->isSuperAdmin() ? 'text-amber-600 dark:text-amber-400' : (Auth::user()->isOperator() ? 'text-emerald-600 dark:text-emerald-400' : (Auth::user()->role === 'custom' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400')) }}">
+                                {{ Auth::user()->isSuperAdmin() ? '👑 Super Admin' : (Auth::user()->isOperator() ? '📋 Operador' : (Auth::user()->role === 'custom' ? '⚙️ Personalizado' : '🛡️ Admin')) }}
                             </p>
                             <p class="text-[11px] text-slate-400 truncate">{{ Auth::user()->email ?? '' }}</p>
                         </div>
@@ -194,26 +206,32 @@
                         </svg>
                     </button>
 
-                    <!-- Add Transaction index on mobile -->
-                    <a href="/transactions" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Historial Financiero">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    </a>
+                    @can('transactions.view')
+                        <!-- Add Transaction index on mobile -->
+                        <a href="/transactions" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Historial Financiero">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </a>
+                    @endcan
 
-                    @if(Auth::user()->isSuperAdmin())
+                    @can('users.manage')
                         <!-- Add Users on mobile -->
                         <a href="{{ route('users.index') }}" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Usuarios y Accesos">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                         </a>
+                    @endcan
 
+                    @can('import.data')
                         <!-- Add Import on mobile -->
                         <a href="/import" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Carga Masiva (Excel)">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         </a>
+                    @endcan
 
+                    @can('database.backup')
                         <a href="{{ route('database.backup') }}" class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition" title="Exportar Base de Datos" onclick="return confirm('¿Estás seguro de que deseas exportar y descargar la base de datos actual?')">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         </a>
-                    @endif
+                    @endcan
                     
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
@@ -244,31 +262,60 @@
             </div>
             
             <!-- Global Floating Transaction Buttons -->
-            <div class="fixed right-4 bottom-20 md:right-8 md:bottom-8 z-40 flex flex-col gap-2.5">
-                <!-- Floating Action Button for payments/expenses -->
-                <button onclick="Livewire.dispatch('openTransactionModal', {type: 'payment'})" class="w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 group focus:outline-none" title="Registrar Pago">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+            <div class="fixed right-4 bottom-20 md:right-8 md:bottom-8 z-40 flex flex-col items-end gap-2.5 pointer-events-none">
+                @can('expenses.create')
+                <!-- Botón Registrar Gasto de Propiedad (Egreso) -->
+                <button 
+                    onclick="Livewire.dispatch('openTransactionModal', {type: 'expense'})" 
+                    class="pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white shadow-xl shadow-rose-600/30 border border-rose-500/50 transition-all duration-200 group focus:outline-none"
+                    title="Registrar Gasto de Propiedad"
+                >
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-xs font-bold tracking-wide hidden sm:inline-block">Registrar Gasto</span>
                 </button>
+                @endcan
+
+                @can('payments.create')
+                <!-- Botón Registrar Cobro / Ingreso de Renta -->
+                <button 
+                    onclick="Livewire.dispatch('openTransactionModal', {type: 'payment'})" 
+                    class="pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xl shadow-emerald-600/35 border border-emerald-500/50 transition-all duration-200 group focus:outline-none"
+                    title="Registrar Ingreso de Renta"
+                >
+                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span class="text-xs font-bold tracking-wide">Cobrar Renta</span>
+                </button>
+                @endcan
             </div>
         </main>
     </div>
 
     <!-- Bottom Navigation Bar (Mobile / Tablet Only) -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 safe-bottom-nav bg-white dark:bg-slate-800 border-t border-slate-150 dark:border-slate-700 flex items-center justify-around px-2 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-        <a href="/dashboard" class="flex flex-col items-center gap-0.5 text-xs font-semibold px-4 py-2 transition {{ request()->is('dashboard') || request()->is('/') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" /></svg>
-            Dashboard
-        </a>
+        @can('dashboard.view')
+            <a href="/dashboard" class="flex flex-col items-center gap-0.5 text-xs font-semibold px-4 py-2 transition {{ request()->is('dashboard') || request()->is('/') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" /></svg>
+                Dashboard
+            </a>
+        @endcan
         
+        @can('houses.view')
         <a href="/houses" class="flex flex-col items-center gap-0.5 text-xs font-semibold px-4 py-2 transition {{ request()->is('houses*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-            Casas
+            Propiedades
         </a>
+        @endcan
         
+        @can('tenants.view')
         <a href="/tenants" class="flex flex-col items-center gap-0.5 text-xs font-semibold px-4 py-2 transition {{ request()->is('tenants*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
             Inquilinos
         </a>
+        @endcan
     </nav>
 
     <!-- Modal informativo para iOS Safari -->
@@ -315,7 +362,7 @@
         // Registrar Service Worker con forzado de actualización
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=2')
+                navigator.serviceWorker.register('/sw.js?v=3')
                     .then(reg => {
                         console.log('PWA Service Worker registrado:', reg.scope);
                         // Forzar comprobación de actualización de caché

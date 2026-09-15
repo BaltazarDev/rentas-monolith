@@ -14,6 +14,16 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        if (auth()->check() && !auth()->user()->can('dashboard.view')) {
+            if (auth()->user()->can('houses.view')) {
+                return redirect()->route('houses.index');
+            }
+            if (auth()->user()->can('tenants.view')) {
+                return redirect()->route('tenants.index');
+            }
+            abort(403, 'Acceso denegado. No tienes permisos para acceder al Dashboard.');
+        }
+
         $monthInput = $request->query('month');
         try {
             $selectedDate = $monthInput ? Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth() : Carbon::now()->startOfMonth();

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +33,20 @@ class AppServiceProvider extends ServiceProvider
             if (!is_dir($path)) {
                 @mkdir($path, 0775, true);
             }
+        }
+
+        // Super Admin bypass
+        Gate::before(function ($user, $ability) {
+            if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+                return true;
+            }
+        });
+
+        // Register all application permissions with Gate
+        foreach (User::getAllPermissionKeys() as $permissionKey) {
+            Gate::define($permissionKey, function ($user) use ($permissionKey) {
+                return method_exists($user, 'hasPermission') ? $user->hasPermission($permissionKey) : false;
+            });
         }
     }
 }

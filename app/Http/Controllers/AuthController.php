@@ -10,7 +10,8 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->intended('/dashboard');
+            $target = Auth::user()->isOperator() ? route('houses.index') : '/dashboard';
+            return redirect()->intended($target);
         }
         return view('auth.login');
     }
@@ -22,7 +23,10 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        // Default remember to true for PWA persistence
+        $remember = $request->has('remember') ? $request->boolean('remember') : true;
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             try {
@@ -37,7 +41,8 @@ class AuthController extends Controller
                 // Ignore logging failure to not block user
             }
 
-            return redirect()->intended('/dashboard');
+            $target = Auth::user()->isOperator() ? route('houses.index') : '/dashboard';
+            return redirect()->intended($target);
         }
 
         try {

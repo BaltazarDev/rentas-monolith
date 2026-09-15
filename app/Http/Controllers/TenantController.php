@@ -11,12 +11,19 @@ class TenantController extends Controller
 {
     public function index()
     {
-        $tenants = Tenant::with('unit.house')->orderBy('full_name')->get();
+        abort_unless(auth()->check() && auth()->user()->can('tenants.view'), 403, 'Acceso denegado. No tienes permisos para ver inquilinos.');
+
+        $query = Tenant::with('unit.house')->orderBy('full_name');
+        if (!auth()->user()->can('tenants.view_all')) {
+            $query->where('is_active', true);
+        }
+        $tenants = $query->get();
         return view('tenants.index', compact('tenants'));
     }
 
     public function create(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('tenants.create'), 403, 'Acceso denegado. No tienes permisos para registrar nuevos inquilinos.');
         $unit_id = $request->query('unit_id');
         // Get all units that are either vacant, or if it is the requested unit_id
         $units = Unit::with('house')->where('status', 'vacant')
@@ -27,6 +34,8 @@ class TenantController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('tenants.create'), 403, 'Acceso denegado. No tienes permisos para registrar nuevos inquilinos.');
+
         $request->validate([
             'unit_id' => 'required|exists:units,id',
             'full_name' => 'required|string|max:255',
@@ -58,6 +67,7 @@ class TenantController extends Controller
 
     public function edit(Tenant $tenant)
     {
+        abort_unless(auth()->check() && auth()->user()->can('tenants.edit'), 403, 'Acceso denegado. No tienes permisos para editar inquilinos.');
         $units = Unit::with('house')->where('status', 'vacant')
             ->orWhere('id', $tenant->unit_id)
             ->get();
@@ -66,6 +76,8 @@ class TenantController extends Controller
 
     public function update(Request $request, Tenant $tenant)
     {
+        abort_unless(auth()->check() && auth()->user()->can('tenants.edit'), 403, 'Acceso denegado. No tienes permisos para editar inquilinos.');
+
         $request->validate([
             'unit_id' => 'required|exists:units,id',
             'full_name' => 'required|string|max:255',
@@ -130,6 +142,8 @@ class TenantController extends Controller
 
     public function destroy(Tenant $tenant)
     {
+        abort_unless(auth()->check() && auth()->user()->can('tenants.delete'), 403, 'Acceso denegado. No tienes permisos para eliminar inquilinos.');
+
         // Free the unit if tenant was active
         if ($tenant->unit_id) {
             Unit::where('id', $tenant->unit_id)->update(['status' => 'vacant']);

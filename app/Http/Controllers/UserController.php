@@ -36,28 +36,37 @@ class UserController extends Controller
     public function create()
     {
         $this->checkSuperAdmin();
-        return view('users.create');
+        $permissionsMap = User::PERMISSIONS_MAP;
+        $roleDefaultPermissions = User::ROLE_DEFAULT_PERMISSIONS;
+        return view('users.create', compact('permissionsMap', 'roleDefaultPermissions'));
     }
 
     public function store(Request $request)
     {
         $this->checkSuperAdmin();
 
+        $allPermissionKeys = implode(',', User::getAllPermissionKeys());
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'role' => 'required|string|in:admin,super_admin',
+            'role' => 'required|string|in:admin,super_admin,operator,custom',
             'password' => 'required|string|min:6|confirmed',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:' . $allPermissionKeys,
         ], [
             'email.unique' => 'Ya existe un usuario registrado con este correo electrónico.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
+        $permissions = $request->role === 'super_admin' ? null : $request->input('permissions', []);
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'permissions' => $permissions,
             'password' => Hash::make($request->password),
         ]);
 
@@ -67,28 +76,37 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->checkSuperAdmin();
-        return view('users.edit', compact('user'));
+        $permissionsMap = User::PERMISSIONS_MAP;
+        $roleDefaultPermissions = User::ROLE_DEFAULT_PERMISSIONS;
+        return view('users.edit', compact('user', 'permissionsMap', 'roleDefaultPermissions'));
     }
 
     public function update(Request $request, User $user)
     {
         $this->checkSuperAdmin();
 
+        $allPermissionKeys = implode(',', User::getAllPermissionKeys());
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|string|in:admin,super_admin',
+            'role' => 'required|string|in:admin,super_admin,operator,custom',
             'password' => 'nullable|string|min:6|confirmed',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:' . $allPermissionKeys,
         ], [
             'email.unique' => 'Ya existe un usuario registrado con este correo electrónico.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
+        $permissions = $request->role === 'super_admin' ? null : $request->input('permissions', []);
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'permissions' => $permissions,
         ];
 
         if ($request->filled('password')) {

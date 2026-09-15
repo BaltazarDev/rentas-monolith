@@ -12,7 +12,13 @@ class HouseController extends Controller
 {
     public function index(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('houses.view'), 403, 'Acceso denegado. No tienes permisos para ver propiedades.');
+
         $status = $request->query('status', 'active');
+        if (!auth()->user()->can('houses.delete')) {
+            $status = 'active';
+        }
+
         $activeCount = House::active()->count();
         $archivedCount = House::archived()->count();
 
@@ -30,11 +36,14 @@ class HouseController extends Controller
 
     public function create()
     {
+        abort_unless(auth()->check() && auth()->user()->can('houses.create'), 403, 'Acceso denegado. No tienes permisos para crear propiedades.');
         return view('houses.create');
     }
 
     public function store(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('houses.create'), 403, 'Acceso denegado. No tienes permisos para crear propiedades.');
+
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string',
@@ -87,11 +96,14 @@ class HouseController extends Controller
 
     public function edit(House $house)
     {
+        abort_unless(auth()->check() && auth()->user()->can('houses.edit'), 403, 'Acceso denegado. No tienes permisos para editar propiedades.');
         return view('houses.edit', compact('house'));
     }
 
     public function update(Request $request, House $house)
     {
+        abort_unless(auth()->check() && auth()->user()->can('houses.edit'), 403, 'Acceso denegado. No tienes permisos para editar propiedades.');
+
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string',
@@ -121,7 +133,7 @@ class HouseController extends Controller
 
     public function archive(House $house)
     {
-        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede archivar propiedades.');
+        abort_unless(auth()->check() && auth()->user()->can('houses.delete'), 403, 'No tienes permisos para archivar propiedades.');
 
         $house->update(['is_archived' => true]);
 
@@ -130,7 +142,7 @@ class HouseController extends Controller
 
     public function unarchive(House $house)
     {
-        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede desarchivar propiedades.');
+        abort_unless(auth()->check() && auth()->user()->can('houses.delete'), 403, 'No tienes permisos para desarchivar propiedades.');
 
         $house->update(['is_archived' => false]);
 
@@ -139,7 +151,7 @@ class HouseController extends Controller
 
     public function destroy(House $house)
     {
-        abort_unless(auth()->user()->isSuperAdmin(), 403, 'Solo el Super Administrador puede eliminar propiedades.');
+        abort_unless(auth()->check() && (auth()->user()->isSuperAdmin() || auth()->user()->can('houses.delete')), 403, 'No tienes permisos para eliminar propiedades.');
 
         try {
             DB::transaction(function () use ($house) {

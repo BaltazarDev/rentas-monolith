@@ -14,6 +14,8 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
+        abort_unless(auth()->check() && auth()->user()->can('transactions.view'), 403, 'Acceso denegado. No tienes permisos para consultar el historial financiero general.');
+
         $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : Carbon::now()->startOfMonth();
         $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : Carbon::now()->endOfMonth();
         $houseId = $request->input('house_id');

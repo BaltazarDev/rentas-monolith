@@ -12,11 +12,13 @@
         </div>
         
         <div class="flex items-center gap-2">
-            <a href="{{ route('houses.edit', $house) }}" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-xl transition" title="Editar Propiedad">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-            </a>
+            @can('houses.edit')
+                <a href="{{ route('houses.edit', $house) }}" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-xl transition" title="Editar Propiedad">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                </a>
+            @endcan
             
-            @if(Auth::check() && Auth::user()->isSuperAdmin())
+            @can('houses.delete')
                 @if($house->is_archived)
                     <!-- Restaurar Propiedad -->
                     <form action="{{ route('houses.unarchive', $house) }}" method="POST">
@@ -40,6 +42,7 @@
                 @endif
 
                 <!-- Eliminar Propiedad Definitivamente -->
+                @if(Auth::user()->isSuperAdmin())
                 <form action="{{ route('houses.destroy', $house) }}" method="POST" onsubmit="return confirm('ADVERTENCIA: ¿Estás seguro de eliminar definitivamente esta propiedad y todas sus unidades asociadas?\n\nEsta acción DESTRUIRÁ permanentemente unidades, contratos y pagos. Si deseas conservar los datos históricos, se recomienda ARCHIVAR.')">
                     @csrf
                     @method('DELETE')
@@ -47,7 +50,8 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 </form>
-            @endif
+                @endif
+            @endcan
         </div>
     </div>
 
@@ -155,10 +159,13 @@
                         </a>
 
                         <div class="flex items-center gap-1 shrink-0 border-l border-slate-200 dark:border-slate-700/80 pl-2">
+                            @can('units.edit')
                             <a href="{{ route('units.edit', $unit) }}" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-xl transition" title="Editar Unidad">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                             </a>
+                            @endcan
 
+                            @can('units.delete')
                             <form action="{{ route('units.destroy', $unit) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar la unidad \'{{ $unit->name }}\'?')">
                                 @csrf
                                 @method('DELETE')
@@ -166,6 +173,7 @@
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                 </button>
                             </form>
+                            @endcan
                         </div>
                     </div>
                 @empty
@@ -173,11 +181,13 @@
                 @endforelse
             </div>
 
-            <!-- Add Unit Button -->
-            <a href="{{ route('units.create', ['house_id' => $house->id]) }}" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-250 hover:border-indigo-400 dark:border-slate-700 dark:hover:border-indigo-500/55 rounded-2xl text-sm font-semibold text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-all duration-200">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                Agregar Unidad
-            </a>
+            @can('units.create')
+                <!-- Add Unit Button -->
+                <a href="{{ route('units.create', ['house_id' => $house->id]) }}" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-250 hover:border-indigo-400 dark:border-slate-700 dark:hover:border-indigo-500/55 rounded-2xl text-sm font-semibold text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-all duration-200">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    Agregar Unidad
+                </a>
+            @endcan
         </div>
 
         <!-- Tab Body: Expenses -->

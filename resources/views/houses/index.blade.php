@@ -9,28 +9,32 @@
             <p class="text-sm text-slate-550 dark:text-slate-400 mt-1">Administra tus casas, departamentos y locales comerciales.</p>
         </div>
         
-        <a href="{{ route('houses.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md font-semibold text-sm transition self-start sm:self-auto">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-            Nueva Propiedad
-        </a>
+        @can('houses.create')
+            <a href="{{ route('houses.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md font-semibold text-sm transition self-start sm:self-auto">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Nueva Propiedad
+            </a>
+        @endcan
     </div>
 
-    <!-- Status Tabs (Activas vs Archivadas) -->
-    <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-        <a href="{{ route('houses.index', ['status' => 'active']) }}" 
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition {{ $status !== 'archived' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-            Activas
-            <span class="text-xs px-2 py-0.5 rounded-full {{ $status !== 'archived' ? 'bg-indigo-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }}">{{ $activeCount }}</span>
-        </a>
-        
-        <a href="{{ route('houses.index', ['status' => 'archived']) }}" 
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition {{ $status === 'archived' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
-            Archivadas
-            <span class="text-xs px-2 py-0.5 rounded-full {{ $status === 'archived' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }}">{{ $archivedCount }}</span>
-        </a>
-    </div>
+    @can('houses.delete')
+        <!-- Status Tabs (Activas vs Archivadas) -->
+        <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <a href="{{ route('houses.index', ['status' => 'active']) }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition {{ $status !== 'archived' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                Activas
+                <span class="text-xs px-2 py-0.5 rounded-full {{ $status !== 'archived' ? 'bg-indigo-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }}">{{ $activeCount }}</span>
+            </a>
+            
+            <a href="{{ route('houses.index', ['status' => 'archived']) }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition {{ $status === 'archived' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                Archivadas
+                <span class="text-xs px-2 py-0.5 rounded-full {{ $status === 'archived' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }}">{{ $archivedCount }}</span>
+            </a>
+        </div>
+    @endcan
 
     @if($status === 'archived')
         <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-4 flex items-center justify-between gap-4">

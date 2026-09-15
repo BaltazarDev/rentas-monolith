@@ -59,6 +59,15 @@
 
         <!-- Login Card -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8 border border-slate-100 dark:border-slate-700/50">
+            @if(session('error'))
+                <div class="mb-5 p-4 bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 rounded-2xl flex items-center gap-3 border border-rose-100 dark:border-rose-900/50 text-xs font-medium">
+                    <svg class="w-5 h-5 text-rose-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
             <form action="/login" method="POST" class="space-y-5">
                 @csrf
                 
@@ -113,6 +122,7 @@
                         type="checkbox" 
                         name="remember" 
                         id="remember" 
+                        checked
                         class="rounded-md border-slate-300 dark:border-slate-700 text-indigo-600 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-4.5 w-4.5 transition cursor-pointer"
                     >
                     <label for="remember" class="ml-2.5 text-sm text-slate-550 dark:text-slate-400 select-none cursor-pointer">Recordar sesión</label>
@@ -145,7 +155,7 @@
         // Registrar Service Worker con actualización
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=2')
+                navigator.serviceWorker.register('/sw.js?v=3')
                     .then(reg => {
                         console.log('PWA Service Worker registrado:', reg.scope);
                         reg.update();

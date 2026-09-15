@@ -13,7 +13,7 @@ class ImportController extends Controller
 {
     protected function checkSuperAdmin()
     {
-        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403, 'Acceso denegado. Solo el Super Administrador puede importar datos.');
+        abort_unless(auth()->check() && (auth()->user()->isSuperAdmin() || auth()->user()->can('import.data')), 403, 'Acceso denegado. No tienes permisos para importar datos.');
     }
 
     public function show()

@@ -13,7 +13,7 @@ class DatabaseBackupController extends Controller
 {
     public function download()
     {
-        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403, 'Acceso denegado. Solo el Super Administrador puede exportar la base de datos.');
+        abort_unless(auth()->check() && (auth()->user()->isSuperAdmin() || auth()->user()->can('database.backup')), 403, 'Acceso denegado. No tienes permisos para exportar la base de datos.');
 
         $driver = DB::connection()->getDriverName();
         $filename = 'backup_' . config('database.connections.' . DB::connection()->getName() . '.database', 'rentas') . '_' . date('Y-m-d_H-i-s');

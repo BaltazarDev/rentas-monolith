@@ -32,5 +32,14 @@ class DatabaseSeeder extends Seeder
                 'role' => 'super_admin',
             ]
         );
+
+        User::updateOrCreate(
+            ['email' => 'operador@rentas.com'],
+            [
+                'name' => 'Operador de Cobranza',
+                'password' => \Illuminate\Support\Facades\Hash::make('Operador123!'),
+                'role' => 'operator',
+            ]
+        );
     }
 }
